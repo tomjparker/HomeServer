@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+LAN_CIDR="192.168.0.0/16"   # your LAN
+
+sudo apt install ufw -y
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# DNS needs both TCP and UDP allowed — UDP is used most of the time, TCP is used for large responses or zone transfers.
+sudo ufw allow from ${LAN_CIDR} to any port 53 proto tcp
+sudo ufw allow from ${LAN_CIDR} to any port 53 proto udp
+sudo ufw allow from ${LAN_CIDR} to any port 22 proto tcp # ssh
+
+# sudo ufw allow from 0.0.0.0/0 to any port 51820 proto udp # (only if you use WireGuard) - not setup yet
+sudo ufw enable
+
+sudo ufw logging on # /var/log/ufw.log
